@@ -42,9 +42,6 @@ See the [setup guide](docs/Getting%20Started.md).
 
 This project is licensed under the terms of the MIT open source license. Please refer to [MIT](./LICENSE.md) for the full terms.
 
-## Maintainers
-
-[Owners](./CODEOWNERS)
 
 ## Support
 
