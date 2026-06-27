@@ -1,0 +1,53 @@
+permissions:
+  contents: write
+  pull-requests: read
+  actions: read
+  packages: read
+
+name: Release Branch Merge Handler
+on:
+  pull_request:
+    types:
+      - closed
+jobs:
+  build:
+    name: Clean Up Release Branch
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && startsWith(github.base_ref, vars.RELEASE_BRANCH_PREFIX)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.5.0
+        with:
+          ref: ${{ github.base_ref }}
+          fetch-depth: 0
+          token: ${{ secrets.SCOPED_PAT }}
+      - name: Compile Release Notes
+        if: vars.GENERATE_RELEASE == 'true'
+        run: |
+          if [ -f release-notes/${{ vars.ISSUE_BRANCH_PREFIX }}*.md ]
+          then
+              if [ ! -f release-notes/release.md ]
+              then
+                  echo "### Includes the following items" > release-notes/release.md
+                  echo >> release-notes/release.md
+              fi
+              for ISSUE_NOTES in `ls release-notes/${{ vars.ISSUE_BRANCH_PREFIX }}*.md`
+              do
+                  NOTES=`cat ${ISSUE_NOTES}`
+                  if ! grep -q "${NOTES}" release-notes/release.md
+                  then
+                      echo "${NOTES}" >> release-notes/release.md
+                  fi
+              done
+          fi
+      - name: Delete Artifacts
+        run: |
+          if [ "${{ vars.GENERATE_RELEASE }}" = "true" ]
+          then
+            rm release-notes/${{ vars.ISSUE_BRANCH_PREFIX }}*.md || true
+          fi
+          rm auth/sandbox-login-url-issue-* || true
+      - uses: stefanzweifel/git-auto-commit-action@75802d269e7721b5146d08f6063ba3097c55ad2b
+        with:
+          branch: ${{ github.ref }}
+          commit_message: Compiled issue release notes and removed auth files
