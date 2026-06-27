@@ -1,5 +1,7 @@
 ## `octoforce-actions`
 
+# THIS IS JUST USING THE TEMPLATE FOR TESTING
+
 A lightweight open-source template Salesforce CI/CD built on the [`GitHub` actions platform](https://github.com/features/actions).
 
 ### Features
@@ -46,6 +48,6 @@ This project is licensed under the terms of the MIT open source license. Please 
 
 ## Support
 
-This template will receive basic maintenace such as bug fixes and security updates.
+NONE
 
-![GitHub Logo](./github-mark.png)
+This is for testing only.
